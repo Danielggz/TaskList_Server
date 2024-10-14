@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -18,12 +20,19 @@ import java.util.ArrayList;
  */
 public class ClientThread implements Runnable{
     String name;
-    Socket link = null;
+    Socket socket = null;
     private ArrayList<Task> taskList = new ArrayList<Task>();
+    PrintWriter out;
     
-    public ClientThread(String name, Socket link){
+    public ClientThread(String name, Socket socket){
         this.name = name;
-        this.link = link;
+        this.socket = socket;
+        //Create global printwriter for the app
+        try{
+            out = new PrintWriter(socket.getOutputStream(),true);
+        }catch(IOException e){
+            System.out.println("Error in PrintWriter: " + e.getMessage());
+        }
     }
     
     @Override
@@ -31,16 +40,24 @@ public class ClientThread implements Runnable{
         String message = "";
         try 
         {
+            //keep communications server-client until STOP request
             while(!message.equalsIgnoreCase("STOP")){
-                BufferedReader in = new BufferedReader( new InputStreamReader(link.getInputStream()));
-                //Receive message from the client and check if is not STOP
-                //Message is add
+                BufferedReader in = new BufferedReader( new InputStreamReader(socket.getInputStream()));
                 message = in.readLine();
-                add(message); 
-                //Message is list
-                //Message is STOP
-                if(message.equalsIgnoreCase("STOP")){
-                    stop();
+                //Split the string in parts (separated by commas)
+                String[] strSplit = message.split(",");
+                if(strSplit.length > 1){
+                    //Check if message contains parts, if not it means is STOP
+                    switch(strSplit[0].toUpperCase()){
+                        case "ADD":
+                            add(strSplit[1], strSplit[2], strSplit[3]); 
+                            break;
+                        case "LIST":
+                            list(message);
+                            break;
+                    }
+                }else{
+                    out.println("Closing: " + name);
                 }
             }
          }
@@ -51,8 +68,8 @@ public class ClientThread implements Runnable{
         finally 
         {
            try {
-                System.out.println("\n* Closing connection... *");
-                link.close();
+                System.out.println("\n Closing connection for " + name);
+                socket.close();
             }
            catch(IOException e)
            {
@@ -62,24 +79,57 @@ public class ClientThread implements Runnable{
         }
     }
     
-    public void add(String message){
-        try{
-            PrintWriter out = new PrintWriter(link.getOutputStream(),true);
+    public void add(String tName, String tDescription, String tDate){
+        synchronized(taskList){
+            //Create new task and add it to the list
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            try{
+                sdf.parse(tDate);
+            }catch(ParseException pe){
+                System.out.println(tDate + " is not a valid date");
+            }
+            taskList.add(new Task(tName, tDescription, sdf));
+            System.out.println("New Task added by " + name);
+            
+            //Retrieve tasks on that day
+            out.println(getTasksByDate(sdf));
+        }
+        
+    }
+    
+    public void list(String message){
+        synchronized(taskList){
             //Receives the message
             System.out.println("The message from " + name + " in server: " + message);
             out.println("Echo Message for client: " + message); 
-        }catch(IOException e){
-            System.out.println("Error when printing message: " + e.getMessage());
         }
     }
     
     public void stop(){
         try{
-            PrintWriter out = new PrintWriter(link.getOutputStream(),true);
+            PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
             //Send stop request
             out.println("Closing..." + name); 
         }catch(IOException e){
             System.out.println("Error when printing message: " + e.getMessage());
         }
+    }
+    
+    public String getTasksByDate(SimpleDateFormat date){
+        String message = date + ": ";
+        synchronized(taskList){
+            for (int i = 0; i<taskList.size(); i++) {
+                Task t = taskList.get(i);
+                if(t.getDate().equals(date)){
+                    //Check if its last position to add separator
+                    if(i == taskList.size()-1){
+                        message += t.getDescription();
+                    }else{
+                        message += t.getDescription() + "; ";
+                    }
+                }
+            }
+        }
+        return message;
     }
 }

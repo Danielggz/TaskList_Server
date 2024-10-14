@@ -5,7 +5,7 @@
 
 package pkg22212337_daniel_server;
 
-import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  * @author Daniel García
@@ -13,9 +13,9 @@ import java.util.Date;
  */
 public class Task {
     private String name, description;
-    private Date date;
+    private SimpleDateFormat date;
 
-    public Task(String name, String description, Date date) {
+    public Task(String name, String description, SimpleDateFormat date) {
         this.name = name;
         this.description = description;
         this.date = date;
@@ -37,11 +37,11 @@ public class Task {
         this.description = description;
     }
 
-    public Date getDate() {
+    public SimpleDateFormat getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(SimpleDateFormat date) {
         this.date = date;
     }
     

@@ -19,14 +19,14 @@ public class Server {
     private static int clientConnections = 0;
 
     public static void main(String[] args) {
-        System.out.println("Opening port...\n");
+        System.out.println("Server listening at port " + PORT);
         try 
         {
             servSock = new ServerSocket(PORT);      //Step 1.
         }
         catch(IOException e) 
         {
-             System.out.println("Unable to attach to port!");
+             System.out.println("Unable to attach to port" + PORT);
              System.exit(1);
         }
         do 
@@ -37,13 +37,13 @@ public class Server {
 
     private static void run()
     {
-        Socket link = null;
+        Socket socket = null;
         try 
         {
-            link = servSock.accept();
+            socket = servSock.accept();
             clientConnections++;
             String clientName = "Client " + clientConnections;
-            Runnable cthread = new ClientThread(clientName, link);
+            Runnable cthread = new ClientThread(clientName, socket);
             Thread t = new Thread(cthread);
             t.start();
         }
