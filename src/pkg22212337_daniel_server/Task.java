@@ -12,21 +12,11 @@ import java.text.SimpleDateFormat;
  * 12/10/2024
  */
 public class Task {
-    private String name, description;
-    private SimpleDateFormat date;
+    private String description, date;
 
-    public Task(String name, String description, SimpleDateFormat date) {
-        this.name = name;
+    public Task(String description, String date) {
         this.description = description;
         this.date = date;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDescription() {
@@ -37,11 +27,11 @@ public class Task {
         this.description = description;
     }
 
-    public SimpleDateFormat getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(SimpleDateFormat date) {
+    public void setDate(String date) {
         this.date = date;
     }
     
