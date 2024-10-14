@@ -10,10 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * @author Daniel García
@@ -22,7 +18,6 @@ import java.util.Date;
 public class ClientThread implements Runnable{
     String name;
     Socket socket = null;
-    private ArrayList<Task> taskList = new ArrayList<Task>();
     PrintWriter out;
     
     public ClientThread(String name, Socket socket){
@@ -81,10 +76,10 @@ public class ClientThread implements Runnable{
     }
     
     public void add(String tDescription, String tDate){
-        synchronized(taskList){
+        synchronized(Server.getTaskList()){
             //Create new task and add it to the list
-            taskList.add(new Task(tDescription, tDate));
-            taskList.notifyAll();
+            Server.getTaskList().add(new Task(tDescription, tDate));
+            Server.getTaskList().notifyAll();
             System.out.println("New Task added by " + name);
             
             //Retrieve tasks on that day
@@ -96,14 +91,15 @@ public class ClientThread implements Runnable{
     public void list(String tDate){
         //Convert date to String to add it to the message
         String message = tDate + ": ";
-        synchronized(taskList){
+        synchronized(Server.getTaskList()){
             boolean dateFound = false;
-            for (int i = 0; i<taskList.size(); i++) {
-                Task t = taskList.get(i);
+            message += "Elements in list: " + Server.getTaskList().size();
+            for (int i = 0; i<Server.getTaskList().size(); i++) {
+                Task t = Server.getTaskList().get(i);
                 if(t.getDate().equals(tDate)){
                     dateFound = true;
                     //Check if its last position to add separator
-                    if(i == taskList.size()-1){
+                    if(i == Server.getTaskList().size()-1){
                         message += t.getDescription();
                     }else{
                         message += t.getDescription() + "; ";

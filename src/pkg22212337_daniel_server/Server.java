@@ -8,6 +8,9 @@ package pkg22212337_daniel_server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Daniel García
@@ -17,6 +20,7 @@ public class Server {
     private static ServerSocket servSock;
     private static final int PORT = 1234;
     private static int clientConnections = 0;
+    private static final List<Task> taskList = new ArrayList<>();
 
     public static void main(String[] args) {
         System.out.println("Server listening at port " + PORT);
@@ -46,10 +50,15 @@ public class Server {
             Runnable cthread = new ClientThread(clientName, socket);
             Thread t = new Thread(cthread);
             t.start();
+            System.out.println("Connections: " + clientConnections);
         }
         catch(IOException e)
         {
             e.printStackTrace();
         }
+    }
+
+    public static List<Task> getTaskList() {
+        return taskList;
     }
 }
