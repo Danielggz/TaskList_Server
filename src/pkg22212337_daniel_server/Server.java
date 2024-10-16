@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,7 +25,7 @@ public class Server {
         System.out.println("Server listening at port " + PORT);
         try 
         {
-            servSock = new ServerSocket(PORT);      //Step 1.
+            servSock = new ServerSocket(PORT);
         }
         catch(IOException e) 
         {

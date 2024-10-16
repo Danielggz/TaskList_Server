@@ -34,7 +34,7 @@ public class ClientThread implements Runnable{
     @Override
     public void run(){
         String message = "";
-        try 
+        try
         {
             //keep communications server-client until STOP request
             while(!message.equalsIgnoreCase("STOP")){
@@ -46,6 +46,7 @@ public class ClientThread implements Runnable{
                     //Check if message contains parts, if not it means is STOP
                     switch(strSplit[0].toUpperCase()){
                         case "ADD":
+                            //Position 1 of string is description and 2 is date
                             add(strSplit[1], strSplit[2]); 
                             break;
                         case "LIST":
@@ -76,10 +77,10 @@ public class ClientThread implements Runnable{
     }
     
     public void add(String tDescription, String tDate){
+        //Use of synchronization for the server list
         synchronized(Server.getTaskList()){
             //Create new task and add it to the list
             Server.getTaskList().add(new Task(tDescription, tDate));
-            Server.getTaskList().notifyAll();
             System.out.println("New Task added by " + name);
             
             //Retrieve tasks on that day
