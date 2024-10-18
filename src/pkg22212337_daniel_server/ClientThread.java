@@ -79,7 +79,7 @@ public class ClientThread implements Runnable{
     public void add(String tDescription, String tDate){
         //Use of synchronization for the server list
         synchronized(Server.getTaskList()){
-            //Create new task and add it to the list
+            //Create new task and add it to the list in server
             Server.getTaskList().add(new Task(tDescription, tDate));
             System.out.println("New Task added by " + name);
             
@@ -94,7 +94,6 @@ public class ClientThread implements Runnable{
         String message = tDate + ": ";
         synchronized(Server.getTaskList()){
             boolean dateFound = false;
-            message += "Elements in list: " + Server.getTaskList().size();
             for (int i = 0; i<Server.getTaskList().size(); i++) {
                 Task t = Server.getTaskList().get(i);
                 if(t.getDate().equals(tDate)){

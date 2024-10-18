@@ -40,7 +40,7 @@ public class Server {
 
     private static void run()
     {
-        Socket socket = null;
+        Socket socket;
         try 
         {
             socket = servSock.accept();
