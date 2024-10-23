@@ -54,7 +54,7 @@ public class ClientThread implements Runnable{
                             break;
                     }
                 }else{
-                    out.println("Closing: " + name);
+                    out.println("TERMINATE: " + name);
                 }
             }
          }
