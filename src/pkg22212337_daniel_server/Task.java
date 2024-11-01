@@ -5,8 +5,6 @@
 
 package pkg22212337_daniel_server;
 
-import java.text.SimpleDateFormat;
-
 /**
  * @author Daniel García
  * 12/10/2024

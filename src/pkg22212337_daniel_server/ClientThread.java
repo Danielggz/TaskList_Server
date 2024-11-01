@@ -86,7 +86,6 @@ public class ClientThread implements Runnable{
             //Retrieve tasks on that day
             list(tDate);
         }
-        
     }
     
     public void list(String tDate){
@@ -98,14 +97,11 @@ public class ClientThread implements Runnable{
                 Task t = Server.getTaskList().get(i);
                 if(t.getDate().equals(tDate)){
                     dateFound = true;
-                    //Check if its last position to add separator
-                    if(i == Server.getTaskList().size()-1){
-                        message += t.getDescription();
-                    }else{
-                        message += t.getDescription() + "; ";
-                    }
+                    message += t.getDescription() + "; ";
                 }
             }
+            //Remove last separator
+            message = message.substring(0, message.length()-2);
             if(!dateFound){
                 message = "No tasks found for that date";
             }
